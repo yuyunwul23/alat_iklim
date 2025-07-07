@@ -13,7 +13,7 @@ st.markdown("Menampilkan lokasi seluruh alat pengamatan iklim BMKG beserta di In
 # File alat & PDF
 # ===============================
 alat_files = {
-    "AAWS": "data/Metadata AAWS.csv",
+    "AAWS": "data/Metadata AAWS.csv"
     "ARG": "data/Metadata ARG.csv",
     "ASRS": "data/Metadata ASRS.csv",
     "AWS": "data/Metadata AWS.csv",
