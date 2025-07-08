@@ -4,10 +4,10 @@ import folium
 from folium.plugins import MarkerCluster
 from streamlit_folium import st_folium
 
-st.set_page_config(page_title="Peta Jaringan Alat Pengamatan Iklim", layout="wide")
+st.set_page_config(page_title="Peta Jaringan Instrumen Pengamatan Iklim", layout="wide")
 
-st.title("🗺️ Peta Jaringan Alat Pengamatan Iklim BMKG")
-st.markdown("Menampilkan lokasi seluruh alat pengamatan iklim BMKG beserta di Indonesia informasi detail setiap alat, serta menyediakan unduhan peta dalam format PDF.")
+st.title("Jaringan Instrumen Pengamatan Iklim BMKG")
+st.markdown("Menampilkan lokasi seluruh alat pengamatan iklim BMKG di Indonesia beserta informasi detail setiap alat, serta menyediakan unduhan peta dalam format PDF.")
 
 # ===============================
 # File alat & PDF
