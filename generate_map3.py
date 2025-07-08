@@ -6,8 +6,8 @@ from streamlit_folium import st_folium
 
 st.set_page_config(page_title="Peta Jaringan Instrumen Pengamatan Iklim", layout="wide")
 
-st.title("Jaringan Instrumen Pengamatan Iklim BMKG")
-st.markdown("Menampilkan lokasi seluruh alat pengamatan iklim BMKG di Indonesia beserta informasi detail setiap alat, serta menyediakan unduhan peta dalam format PDF.")
+st.title("Peta Jaringan Instrumen Pengamatan Iklim")
+st.markdown("Menampilkan lokasi seluruh instrumen pengamatan iklim BMKG beserta informasi detail setiap alat, serta menyediakan unduhan peta dalam format PDF.")
 
 # ===============================
 # File alat & PDF
@@ -65,7 +65,7 @@ jenis_alat_tersedia_with_all = ["Semua"] + jenis_alat_tersedia
 alat_dipilih = st.multiselect(
     "Pilih jenis alat yang ingin ditampilkan di peta:",
     jenis_alat_tersedia_with_all,
-    default=["Semua"]
+    default=["AAWS"]
 )
 
 if "Semua" in alat_dipilih:
@@ -135,23 +135,45 @@ for _, row in df_filtered.iterrows():
 # Tampilkan peta di Streamlit
 # ===============================
 st_data = st_folium(m, width=1000, height=600)
+# ===============================
+# Statistik Jumlah Alat per Provinsi (Tergantung Filter)
+# ===============================
+st.subheader("📊 Statistik Jumlah Alat per Provinsi")
+
+if not df_filtered.empty:
+    statistik = df_filtered.groupby("provinsi").size().reset_index(name="Jumlah Alat")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 📋 Tabel Jumlah Alat per Provinsi")
+        st.dataframe(statistik, use_container_width=True)
+        
+    with col2:
+        st.markdown("#### 📈 Grafik Batang Jumlah Alat per Provinsi")
+        st.bar_chart(statistik.set_index("provinsi"))
+else:
+    st.warning("Tidak ada data yang cocok dengan filter yang dipilih.")
 
 # ===============================
-# Dropdown untuk download PDF
+# Tampilkan opsi unduh PDF jika hanya satu jenis alat dipilih
 # ===============================
-st.subheader("⬇️ Unduh Peta PDF Berdasarkan Jenis Alat")
+if len(alat_dipilih_filtered) == 1:
+    jenis_pdf = alat_dipilih_filtered[0]
+    pdf_path = pdf_files.get(jenis_pdf)
 
-alat_pilihan = st.selectbox("Pilih jenis peta alat:", list(pdf_files.keys()))
-
-if alat_pilihan:
-    pdf_path = pdf_files[alat_pilihan]
-    try:
-        with open(pdf_path, "rb") as f:
-            st.download_button(
-                label=f"📄 Download {alat_pilihan}",
-                data=f,
-                file_name=pdf_path.split("/")[-1],
-                mime="application/pdf"
-            )
-    except FileNotFoundError:
-        st.error(f"❌ File PDF {pdf_path} tidak ditemukan.")
+    st.subheader(f"⬇️ Unduh Peta PDF: {jenis_pdf}")
+    
+    if pdf_path:
+        try:
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    label=f"📄 Download Peta {jenis_pdf}",
+                    data=f,
+                    file_name=pdf_path.split("/")[-1],
+                    mime="application/pdf"
+                )
+        except FileNotFoundError:
+            st.error(f"❌ File PDF {pdf_path} tidak ditemukan.")
+else:
+    st.info("📄 Pilih hanya satu jenis alat untuk mengaktifkan unduhan PDF.")
